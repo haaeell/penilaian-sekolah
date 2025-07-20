@@ -16,24 +16,25 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::all();
+        $users = User::where('role', 'siswa')->get();
         $kelas = Kelas::all();
+        $jurusan = Jurusan::all();
 
-        return view('admin.users.index', compact('users', 'kelas'));
+        return view('admin.users.siswa.index', compact('users', 'kelas', 'jurusan'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:admin,guru,karyawan,siswa',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $user = User::create([
@@ -44,7 +45,7 @@ class SiswaController extends Controller
 
         Siswa::create([
             'user_id' => $user->id,
-            'nama' => $request->nama,
+            'nama' => $request->name,
             'jurusan_id' => $request->jurusan_id,
             'kelas_id' => $request->kelas_id,
         ]);
@@ -52,11 +53,16 @@ class SiswaController extends Controller
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan.');
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        $user = User::find($id);
         $request->validate([
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'nama' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id, 'id'),
+            ],
+            'name' => 'required|string|max:255',
         ]);
 
         $user->update([
@@ -65,7 +71,7 @@ class SiswaController extends Controller
         ]);
 
         $user->siswa()->update([
-            'nama' => $request->nama,
+            'nama' => $request->name,
             'jurusan_id' => $request->jurusan_id,
             'kelas_id' => $request->kelas_id,
         ]);
@@ -73,11 +79,18 @@ class SiswaController extends Controller
         return redirect()->back()->with('success', 'Siswa berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::find($id);
         $user->siswa()->delete();
         $user->delete();
 
         return redirect()->back()->with('success', 'Siswa berhasil dihapus.');
+    }
+
+    public function getKelasByJurusan($id)
+    {
+        $kelas = Kelas::where('jurusan_id', $id)->get();
+        return response()->json($kelas);
     }
 }

@@ -86,10 +86,17 @@ return new class extends Migration
 
         Schema::create('penilaian', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('target_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('instrumen_id')->constrained('instrumen')->onDelete('cascade');
-            $table->foreignId('periode_id')->constrained('periode')->onDelete('cascade');
+
+            $table->string('nama_siswa');
+            $table->string('nama_target');
+            $table->string('nama_instrumen');
+            $table->string('nama_periode');
+
+            $table->unsignedBigInteger('siswa_id')->nullable();
+            $table->unsignedBigInteger('target_id')->nullable();
+            $table->unsignedBigInteger('instrumen_id')->nullable();
+            $table->unsignedBigInteger('periode_id')->nullable();
+
             $table->integer('skor');
             $table->timestamps();
         });

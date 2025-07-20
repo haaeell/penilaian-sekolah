@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
 use App\Models\Guru;
-use App\Models\Jurusan;
-use App\Models\Karyawan;
 use App\Models\Kelas;
-use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class GuruController extends Controller
 {
@@ -28,7 +25,7 @@ class GuruController extends Controller
         $request->validate([
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $user = User::create([
@@ -37,29 +34,60 @@ class GuruController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        Guru::create(['user_id' => $user->id, 'nama' => $request->nama]);
+        $guru = Guru::create([
+            'user_id' => $user->id,
+            'nama' => $request->name
+        ]);
+
+        if ($request->has('kelas_id')) {
+            $guru->kelas()->sync($request->kelas_id);
+        }
 
         return redirect()->back()->with('success', 'Guru berhasil ditambahkan.');
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        $user = User::find($id);
+        $guru = $user->guru;
+
+        if (!$guru) {
+            return redirect()->route('guru.index')->with('error', 'Data guru tidak ditemukan.');
+        }
+
         $request->validate([
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'nama' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|min:6',
+            'kelas_id' => 'nullable|array',
+            'kelas_id.*' => 'exists:kelas,id'
         ]);
 
         $user->update([
             'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
-        $user->guru()->update(['nama' => $request->nama]);
+        $guru->update([
+            'nama' => $request->name
+        ]);
+
+        if ($request->has('kelas_id')) {
+            $guru->kelas()->sync($request->kelas_id);
+        } else {
+            $guru->kelas()->detach();
+        }
 
         return redirect()->back()->with('success', 'Guru berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::find($id);
         $user->guru()->delete();
         $user->delete();
 

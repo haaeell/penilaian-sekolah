@@ -4,11 +4,51 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+    <title>PENILAIAN</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('assets') }}/images/logos/favicon.png" />
     <link rel="stylesheet" href="{{ asset('assets') }}/css/styles.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    @stack('styles')
 </head>
+
+<style>
+    .radio-wrapper input[type="radio"]:checked+label::before {
+        background-color: #10b981;
+        /* Tailwind green-500 */
+        border-color: #10b981;
+        content: '✔';
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    .radio-wrapper input[type="radio"]+label::before {
+        content: '';
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 2px solid #d1d5db;
+        /* Tailwind gray-300 */
+        border-radius: 9999px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .radio-wrapper input[type="radio"] {
+        display: none;
+    }
+
+    .radio-wrapper label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+</style>
 
 <body>
     <!--  Body Wrapper -->
@@ -119,7 +159,7 @@
     <script src="{{ asset('assets') }}/js/dashboard.js"></script>
     <!-- solar icons -->
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @if ($errors->any())
         <script>
             let errorMessages = '';

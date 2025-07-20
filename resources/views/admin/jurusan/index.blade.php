@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.dashboard')
 
 @section('content')
@@ -6,8 +5,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4 class="card-title fw-bold">Data Admin</h4>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahAdmin">
+                    <h4 class="card-title fw-bold">Data Jurusan</h4>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahJurusan">
                         <i class="ti ti-plus"></i> Tambah
                     </button>
                 </div>
@@ -17,67 +16,50 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Email</th>
+                                <th>Nama Jurusan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $item)
+                            @foreach ($jurusan as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->admin->nama ?? '-' }}</td>
-                                    <td>{{ $item->email }}</td>
+                                    <td>{{ $item->nama_jurusan }}</td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <button class="btn btn-warning"
-                                                data-bs-target="#modalEditAdmin{{ $item->id }}" data-bs-toggle="modal">
+                                                data-bs-target="#modalEditJurusan{{ $item->id }}"
+                                                data-bs-toggle="modal">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
                                             <button class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#modalHapusAdmin{{ $item->id }}">
+                                                data-bs-target="#modalHapusJurusan{{ $item->id }}">
                                                 <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <!-- Modal Edit Admin -->
-                                <div class="modal fade" id="modalEditAdmin{{ $item->id }}" tabindex="-1"
-                                    aria-labelledby="modalEditAdmin{{ $item->id }}Label" aria-hidden="true">
+                                <!-- Modal Edit Jurusan -->
+                                <div class="modal fade" id="modalEditJurusan{{ $item->id }}" tabindex="-1"
+                                    aria-labelledby="modalEditJurusan{{ $item->id }}Label" aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="{{ route('admin.update', $item->id) }}">
+                                        <form method="POST" action="{{ route('jurusan.update', $item->id) }}">
                                             @csrf
                                             @method('PUT')
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Edit Admin</h5>
+                                                    <h5 class="modal-title">Edit Jurusan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Tutup"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label for="editNama{{ $item->id }}"
-                                                            class="form-label">Nama</label>
-                                                        <input type="text" name="name"
-                                                            id="editNama{{ $item->id }}"
-                                                            value="{{ $item->admin->nama }}" class="form-control" required>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="editEmail{{ $item->id }}"
-                                                            class="form-label">Email</label>
-                                                        <input type="email" name="email"
-                                                            id="editEmail{{ $item->id }}" value="{{ $item->email }}"
-                                                            class="form-control" required>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="editPassword{{ $item->id }}"
-                                                            class="form-label">Password</label>
-                                                        <input type="password" name="password"
-                                                            id="editPassword{{ $item->id }}" class="form-control">
-                                                        <small>Biarkan kosong jika tidak ingin mengganti password</small>
+                                                        <label for="editNamaJurusan{{ $item->id }}"
+                                                            class="form-label">Nama Jurusan</label>
+                                                        <input type="text" name="nama_jurusan"
+                                                            id="editNamaJurusan{{ $item->id }}"
+                                                            value="{{ $item->nama_jurusan }}" class="form-control" required>
                                                     </div>
                                                 </div>
 
@@ -91,21 +73,21 @@
                                     </div>
                                 </div>
 
-                                <!-- Modal Hapus Admin -->
-                                <div class="modal fade" id="modalHapusAdmin{{ $item->id }}" tabindex="-1"
-                                    aria-labelledby="modalHapusAdminLabel" aria-hidden="true">
+                                <!-- Modal Hapus Jurusan -->
+                                <div class="modal fade" id="modalHapusJurusan{{ $item->id }}" tabindex="-1"
+                                    aria-labelledby="modalHapusJurusanLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
-                                        <form method="POST" action="{{ route('admin.destroy', $item->id) }}">
+                                        <form method="POST" action="{{ route('jurusan.destroy', $item->id) }}">
                                             @csrf
                                             @method('DELETE')
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Hapus Admin</h5>
+                                                    <h5 class="modal-title">Hapus Jurusan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Tutup"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Yakin ingin menghapus Admin ini?</p>
+                                                    <p>Yakin ingin menghapus Jurusan ini?</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button class="btn btn-danger" type="submit">Hapus</button>
@@ -124,30 +106,21 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Admin -->
-    <div class="modal fade" id="modalTambahAdmin" tabindex="-1" aria-labelledby="modalTambahAdminLabel" aria-hidden="true">
+    <!-- Modal Tambah Jurusan -->
+    <div class="modal fade" id="modalTambahJurusan" tabindex="-1" aria-labelledby="modalTambahJurusanLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
-            <form action="{{ route('admin.store') }}" method="POST">
+            <form action="{{ route('jurusan.store') }}" method="POST">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Tambah Admin</h5>
+                        <h5 class="modal-title">Tambah Jurusan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nama</label>
-                            <input type="text" name="name" id="name" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" required>
+                            <label for="nama_jurusan" class="form-label">Nama Jurusan</label>
+                            <input type="text" name="nama_jurusan" id="nama_jurusan" class="form-control" required>
                         </div>
                     </div>
 
@@ -163,4 +136,3 @@
 
 @push('scripts')
 @endpush
-```

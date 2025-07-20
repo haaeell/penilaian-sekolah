@@ -32,83 +32,28 @@ class DatabaseSeeder extends Seeder
         $rplKelas2 = Kelas::create(['nama_kelas' => 'XI RPL 1', 'jurusan_id' => $rpl->id]);
 
         // Users
-        $adminUser = User::create([
-            'email' => 'admin@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-        $guruTkjUser = User::create([
-            'email' => 'guru1@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'guru',
-        ]);
-        $guruRplUser = User::create([
-            'email' => 'guru2@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'guru',
-        ]);
-        $karyawanTkjUser = User::create([
-            'email' => 'karyawan1@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'karyawan',
-        ]);
-        $karyawanRplUser = User::create([
-            'email' => 'karyawan2@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'karyawan',
-        ]);
-        $siswaTkjUser = User::create([
-            'email' => 'siswa1@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'siswa',
-        ]);
-        $siswaRplUser = User::create([
-            'email' => 'siswa2@school.com',
-            'password' => Hash::make('password'),
-            'role' => 'siswa',
-        ]);
+        $adminUser = User::create(['email' => 'admin@school.com', 'password' => Hash::make('password'), 'role' => 'admin']);
+        $guruTkjUser = User::create(['email' => 'guru1@school.com', 'password' => Hash::make('password'), 'role' => 'guru']);
+        $guruRplUser = User::create(['email' => 'guru2@school.com', 'password' => Hash::make('password'), 'role' => 'guru']);
+        $karyawanTkjUser = User::create(['email' => 'karyawan1@school.com', 'password' => Hash::make('password'), 'role' => 'karyawan']);
+        $karyawanRplUser = User::create(['email' => 'karyawan2@school.com', 'password' => Hash::make('password'), 'role' => 'karyawan']);
+        $siswaTkjUser = User::create(['email' => 'siswa1@school.com', 'password' => Hash::make('password'), 'role' => 'siswa']);
+        $siswaRplUser = User::create(['email' => 'siswa2@school.com', 'password' => Hash::make('password'), 'role' => 'siswa']);
 
         // Admin
-        Admin::create([
-            'user_id' => $adminUser->id,
-            'nama' => 'Admin Utama',
-        ]);
+        Admin::create(['user_id' => $adminUser->id, 'nama' => 'Admin Utama']);
 
         // Guru
-        $guruTkj = Guru::create([
-            'user_id' => $guruTkjUser->id,
-            'nama' => 'Guru TKJ',
-        ]);
-        $guruRpl = Guru::create([
-            'user_id' => $guruRplUser->id,
-            'nama' => 'Guru RPL',
-        ]);
+        $guruTkj = Guru::create(['user_id' => $guruTkjUser->id, 'nama' => 'Guru TKJ']);
+        $guruRpl = Guru::create(['user_id' => $guruRplUser->id, 'nama' => 'Guru RPL']);
 
         // Karyawan
-        Karyawan::create([
-            'user_id' => $karyawanTkjUser->id,
-            'nama' => 'Karyawan Lab TKJ',
-            'jurusan_id' => $tkj->id,
-        ]);
-        Karyawan::create([
-            'user_id' => $karyawanRplUser->id,
-            'nama' => 'Karyawan Lab RPL',
-            'jurusan_id' => $rpl->id,
-        ]);
+        $karyawanTkj = Karyawan::create(['user_id' => $karyawanTkjUser->id, 'nama' => 'Karyawan Lab TKJ', 'jurusan_id' => $tkj->id]);
+        $karyawanRpl = Karyawan::create(['user_id' => $karyawanRplUser->id, 'nama' => 'Karyawan Lab RPL', 'jurusan_id' => $rpl->id]);
 
         // Siswa
-        $siswaTkj = Siswa::create([
-            'user_id' => $siswaTkjUser->id,
-            'nama' => 'Siswa TKJ 1',
-            'kelas_id' => $tkjKelas1->id,
-            'jurusan_id' => $tkj->id,
-        ]);
-        $siswaRpl = Siswa::create([
-            'user_id' => $siswaRplUser->id,
-            'nama' => 'Siswa RPL 1',
-            'kelas_id' => $rplKelas1->id,
-            'jurusan_id' => $rpl->id,
-        ]);
+        $siswaTkj = Siswa::create(['user_id' => $siswaTkjUser->id, 'nama' => 'Siswa TKJ 1', 'kelas_id' => $tkjKelas1->id, 'jurusan_id' => $tkj->id]);
+        $siswaRpl = Siswa::create(['user_id' => $siswaRplUser->id, 'nama' => 'Siswa RPL 1', 'kelas_id' => $rplKelas1->id, 'jurusan_id' => $rpl->id]);
 
         // GuruKelas
         DB::table('guru_kelas')->insert([
@@ -136,51 +81,33 @@ class DatabaseSeeder extends Seeder
             'is_active' => false,
         ]);
 
-        // Penilaian
-        // Penilaian oleh Siswa TKJ
-        Penilaian::create([
-            'siswa_id' => $siswaTkj->id,
-            'target_id' => $guruTkjUser->id,
-            'instrumen_id' => $instrumenGuru1->id,
-            'periode_id' => $periode->id,
-            'skor' => 4,
-        ]);
-        Penilaian::create([
-            'siswa_id' => $siswaTkj->id,
-            'target_id' => $guruTkjUser->id,
-            'instrumen_id' => $instrumenGuru2->id,
-            'periode_id' => $periode->id,
-            'skor' => 5,
-        ]);
-        Penilaian::create([
-            'siswa_id' => $siswaTkj->id,
-            'target_id' => $karyawanTkjUser->id,
-            'instrumen_id' => $instrumenKaryawanTkj->id,
-            'periode_id' => $periode->id,
-            'skor' => 3,
-        ]);
+        // ======================
+        // Penilaian (Pakainya Snapshot)
+        // ======================
+        $this->buatPenilaian($siswaTkj, $guruTkjUser, $instrumenGuru1, $periode, 4);
+        $this->buatPenilaian($siswaTkj, $guruTkjUser, $instrumenGuru2, $periode, 5);
+        $this->buatPenilaian($siswaTkj, $karyawanTkjUser, $instrumenKaryawanTkj, $periode, 3);
+        $this->buatPenilaian($siswaRpl, $guruRplUser, $instrumenGuru1, $periode, 5);
+        $this->buatPenilaian($siswaRpl, $guruRplUser, $instrumenGuru2, $periode, 4);
+        $this->buatPenilaian($siswaRpl, $karyawanRplUser, $instrumenKaryawanRpl, $periode, 4);
+    }
 
-        // Penilaian oleh Siswa RPL
+    private function buatPenilaian($siswa, $targetUser, $instrumen, $periode, $skor)
+    {
+        $namaTarget = $targetUser->guru->nama ?? $targetUser->karyawan->nama ?? $targetUser->email;
+
         Penilaian::create([
-            'siswa_id' => $siswaRpl->id,
-            'target_id' => $guruRplUser->id,
-            'instrumen_id' => $instrumenGuru1->id,
+            'nama_siswa' => $siswa->nama,
+            'nama_target' => $namaTarget,
+            'nama_instrumen' => $instrumen->pertanyaan,
+            'nama_periode' => $periode->nama_periode,
+
+            'siswa_id' => $siswa->id,
+            'target_id' => $targetUser->id,
+            'instrumen_id' => $instrumen->id,
             'periode_id' => $periode->id,
-            'skor' => 5,
-        ]);
-        Penilaian::create([
-            'siswa_id' => $siswaRpl->id,
-            'target_id' => $guruRplUser->id,
-            'instrumen_id' => $instrumenGuru2->id,
-            'periode_id' => $periode->id,
-            'skor' => 4,
-        ]);
-        Penilaian::create([
-            'siswa_id' => $siswaRpl->id,
-            'target_id' => $karyawanRplUser->id,
-            'instrumen_id' => $instrumenKaryawanRpl->id,
-            'periode_id' => $periode->id,
-            'skor' => 4,
+
+            'skor' => $skor,
         ]);
     }
 }

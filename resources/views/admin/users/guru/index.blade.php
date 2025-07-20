@@ -16,8 +16,9 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Email</th>
                                 <th>Nama</th>
+                                <th> Email </th>
+                                <th>Kelas</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -25,23 +26,118 @@
                             @foreach ($users as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $item->guru->nama ?? '-' }}</td>
                                     <td>{{ $item->email }}</td>
-                                    <td>{{ optional($item->guru)->nama ?? '-' }}</td>
+                                    <td>
+                                        @if ($item->guru && $item->guru->kelas->isNotEmpty())
+                                            {{ $item->guru->kelas->pluck('nama_kelas')->implode(', ') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-warning btnEditGuru" data-bs-toggle="modal"
-                                                data-bs-target="#modalEditGuru" data-id="{{ $item->id }}"
-                                                data-email="{{ $item->email }}"
-                                                data-nama="{{ optional($item->guru)->nama }}">
+                                            <button class="btn btn-warning"
+                                                data-bs-target="#modalEditGuru{{ $item->id }}" data-bs-toggle="modal">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
-                                            <button class="btn btn-danger btnHapusGuru" data-bs-toggle="modal"
-                                                data-bs-target="#modalHapusGuru" data-id="{{ $item->id }}">
+                                            <button class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#modalHapusGuru{{ $item->id }}">
                                                 <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <!-- Modal Edit Guru -->
+                                <div class="modal fade" id="modalEditGuru{{ $item->id }}" tabindex="-1"
+                                    aria-labelledby="modalEditGuru{{ $item->id }}Label" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="{{ route('guru.update', $item->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Guru</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="editNama{{ $item->id }}"
+                                                            class="form-label">Nama</label>
+                                                        <input type="text" name="name"
+                                                            id="editNama{{ $item->id }}"
+                                                            value="{{ $item->guru->nama ?? '' }}" class="form-control"
+                                                            required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="editEmail{{ $item->id }}"
+                                                            class="form-label">Email</label>
+                                                        <input type="email" name="email"
+                                                            id="editEmail{{ $item->id }}" value="{{ $item->email }}"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="editKelas{{ $item->id }}" class="form-label">Kelas
+                                                            yang Diajar</label>
+                                                        <select name="kelas_id[]" id="editKelas{{ $item->id }}"
+                                                            class="form-select select2" multiple>
+                                                            @foreach ($kelas as $k)
+                                                                <option value="{{ $k->id }}"
+                                                                    {{ $item->guru && $item->guru->kelas->contains('id', $k->id) ? 'selected' : '' }}>
+                                                                    {{ $k->nama_kelas }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="editPassword{{ $item->id }}"
+                                                            class="form-label">Password</label>
+                                                        <input type="password" name="password"
+                                                            id="editPassword{{ $item->id }}" class="form-control">
+                                                        <small>Biarkan kosong jika tidak ingin mengganti password</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-primary" type="submit">Simpan</button>
+                                                    <button class="btn btn-dark" type="button"
+                                                        data-bs-dismiss="modal">Batal</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Modal Hapus Guru -->
+                                <div class="modal fade" id="modalHapusGuru{{ $item->id }}" tabindex="-1"
+                                    aria-labelledby="modalHapusGuruLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form method="POST" action="{{ route('guru.destroy', $item->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Hapus Guru</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Yakin ingin menghapus Guru ini?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-danger" type="submit">Hapus</button>
+                                                    <button class="btn btn-dark" type="button"
+                                                        data-bs-dismiss="modal">Batal</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -61,106 +157,71 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="role" value="Guru">
-
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" name="nama" class="form-control" required>
+                            <label for="name" class="form-label">Nama</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="kelas_id" class="form-label">Kelas yang Diajar</label>
+                            <select name="kelas_id[]" id="kelas_id" class="form-select select2" multiple>
+                                @foreach ($kelas as $k)
+                                    <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <input type="password" name="password" id="password" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="modal-footer">
                         <button class="btn btn-primary" type="submit">Simpan</button>
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Batal</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Edit Guru -->
-    <div class="modal fade" id="modalEditGuru" tabindex="-1" aria-labelledby="modalEditGuruLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" id="formEditGuru">
-                @csrf
-                @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Guru</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="editNama" class="form-label">Nama</label>
-                            <input type="text" name="nama" id="editNama" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="email" name="email" id="editEmail" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit">Simpan</button>
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Batal</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Hapus Guru -->
-    <div class="modal fade" id="modalHapusGuru" tabindex="-1" aria-labelledby="modalHapusGuruLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" id="formHapusGuru">
-                @csrf
-                @method('DELETE')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Hapus Guru</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Yakin ingin menghapus Guru ini?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger" type="submit">Hapus</button>
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Batal</button>
+                        <button class="btn btn-dark" type="button" data-bs-dismiss="modal">Batal</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 @endsection
-
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $('.btnEditGuru').on('click', function() {
-                const id = $(this).data('id');
-                const email = $(this).data('email');
-                const nama = $(this).data('nama');
-
-                $('#formEditGuru').attr('action', `/guru/${id}`);
-                $('#editEmail').val(email);
-                $('#editNama').val(nama);
+            $('#kelas_id').select2({
+                placeholder: "Pilih kelas",
+                allowClear: true,
+                dropdownParent: $('#modalTambahGuru')
             });
 
-            $('.btnHapusGuru').on('click', function() {
-                const id = $(this).data('id');
-                $('#formHapusGuru').attr('action', `/guru/${id}`);
+            @foreach ($users as $item)
+                $('#editKelas{{ $item->id }}').select2({
+                    placeholder: "Pilih kelas",
+                    allowClear: true,
+                    dropdownParent: $('#modalEditGuru{{ $item->id }}')
+                });
+            @endforeach
+
+            $('.modal').on('hidden.bs.modal', function() {
+                $(this).find('.select2').each(function() {
+                    $(this).select2('destroy');
+                });
+            });
+
+            $('.modal').on('shown.bs.modal', function() {
+                $(this).find('.select2').each(function() {
+                    $(this).select2({
+                        placeholder: "Pilih kelas",
+                        allowClear: true,
+                        dropdownParent: $(this).closest('.modal')
+                    });
+                });
             });
         });
     </script>

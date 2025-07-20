@@ -43,17 +43,16 @@ class KaryawanController extends Controller
         return redirect()->back()->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Karyawan $karyawan)
+    public function update(Request $request, $id)
     {
-        $user = $karyawan->user;
-
+        $user = User::find($id);
         $request->validate([
             'email' => [
                 'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($user->id, 'id'),
             ],
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $user->update([
@@ -62,15 +61,16 @@ class KaryawanController extends Controller
         ]);
 
         $user->karyawan()->update([
-            'nama' => $request->nama,
+            'nama' => $request->name,
             'jurusan_id' => $request->jurusan_id,
         ]);
 
         return redirect()->back()->with('success', 'Karyawan berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::find($id);
         $user->karyawan()->delete();
         $user->delete();
 

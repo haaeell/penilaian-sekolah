@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\HasilPenilaianController;
 use App\Http\Controllers\SiswaController;
-use App\Http\Controllers\GuruKaryawanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstrumenController;
+use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\UserController;
@@ -18,6 +20,9 @@ Route::get('/', function () {
 });
 
 Route::get('/home', [HomeController::class, 'index'])->name('admin.dashboard')->middleware('auth');
+Route::get('/hasil-penilaian', [HasilPenilaianController::class, 'index']);
+Route::post('/hasil-penilaian-detail', [HasilPenilaianController::class, 'detail'])->name('hasil-penilaian.detail');
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('admin', AdminController::class)->except('create', 'show', 'edit');
     Route::resource('guru', GuruController::class);
@@ -26,15 +31,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('instrumen', InstrumenController::class);
     Route::resource('periode', PeriodeController::class);
+    Route::resource('jurusan', JurusanController::class);
+    Route::resource('kelas', KelasController::class);
+
+    Route::get('/kelas-by-jurusan/{id}', [SiswaController::class, 'getKelasByJurusan']);
 });
 
 Route::middleware(['auth', 'role:siswa'])->group(function () {
     Route::resource('penilaian', PenilaianController::class);
 });
 
-Route::middleware(['auth', 'role:guru,karyawan'])->group(function () {
-    Route::get('/hasil-penilaian', [PenilaianController::class, 'hasilPenilaian'])->name('hasil.penilaian');
-    Route::get('/hasil-penilaian/download', [PenilaianController::class, 'downloadHasil'])->name('hasil.penilaian.download');
-});
+Route::middleware(['auth', 'role:guru,karyawan'])->group(function () {});
 
 Auth::routes();

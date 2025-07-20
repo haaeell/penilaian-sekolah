@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+    <title>Penilaian Dani</title>
     <link rel="shortcut icon" type="image/png" href="./assets/images/logos/favicon.png" />
     <link rel="stylesheet" href="./assets/css/styles.min.css" />
 </head>
@@ -22,7 +22,7 @@
                                 <a href="./index.html" class="text-nowrap logo-img text-center d-block py-3 w-100">
                                     <img src="./assets/images/logos/logo.svg" alt="">
                                 </a>
-                                <p class="text-center">Your Social Campaigns</p>
+                                <p class="text-center">Penilaian Dani</p>
                                 <form action="{{ route('login') }}" method="POST">
                                     @csrf
 
